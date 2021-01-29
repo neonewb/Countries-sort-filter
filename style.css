@@ -1,3 +1,34 @@
+table {
+  text-align: left;
+  position: relative;
+  border-collapse: collapse;
+}
+
 th {
   cursor: pointer;
+  padding: 10px 5px;
+  position: sticky;
+  top: 0;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  background: green;
+  color: white;
+  z-index: 1;
+}
+
+.th_sort_asc::after {
+  content: '\25b4';
+}
+
+.th_sort_desc::after {
+  content: '\25be';
+}
+
+.th_sort_asc::after,
+.th_sort_desc::after {
+  margin-left: 5px;
+}
+
+.th_sort_asc,
+.th_sort_desc {
+  background: darkgreen;
 }

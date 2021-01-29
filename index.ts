@@ -1,12 +1,10 @@
-let sortedBy: Props | null = null
 main()
+const headers = document.querySelectorAll('th')
 
 async function main() {
   const countries = await api()
 
   renderCountries(countries)
-
-  const headers = document.querySelectorAll('th')
 
   for (const head of headers) {
     head.addEventListener('click', (event) => {
@@ -80,12 +78,16 @@ function sortBy(event: Event | undefined, countries: Country[]) {
     return 0
   })
 
-  if (sortedBy === prop) {
+  const asc = event.target.classList.contains('th_sort_asc')
+
+  if (asc) {
     countries.reverse()
-    sortedBy = null
-  } else {
-    sortedBy = prop
   }
+
+  headers.forEach((h) => h.classList.remove('th_sort_asc', 'th_sort_desc'))
+
+  event.target.classList.toggle('th_sort_asc', !asc)
+  event.target.classList.toggle('th_sort_desc', asc)
 }
 
 interface Country {
