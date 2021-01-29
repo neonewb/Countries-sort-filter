@@ -13,6 +13,7 @@ const search = document.querySelector('input');
     }
     search.addEventListener('input', (event) => {
         countriesCopy = searchBy(event, countries);
+        sortWith(countriesCopy);
         renderCountries(countriesCopy);
     });
 })();
@@ -34,6 +35,8 @@ async function api() {
     }
 }
 function renderCountries(countries) {
+    if (!countries)
+        return;
     const tableBody = document.querySelector('#tb');
     tableBody.innerHTML = '';
     for (const country of countries) {
@@ -59,7 +62,7 @@ function createCell(name) {
     return cell;
 }
 function sortBy(event, countries) {
-    if (!event || !event.target)
+    if (!event || !event.target || !countries)
         return;
     const prop = event.target.innerText.toLowerCase();
     countries.sort((a, b) => {
@@ -78,6 +81,37 @@ function sortBy(event, countries) {
     headers.forEach((h) => h.classList.remove('th_sort_asc', 'th_sort_desc'));
     event.target.classList.toggle('th_sort_asc', !asc);
     event.target.classList.toggle('th_sort_desc', asc);
+}
+function sortWith(countries) {
+    if (!countries)
+        return;
+    let prop;
+    let asc = false;
+    headers.forEach((h) => {
+        if (h.classList.contains('th_sort_asc')) {
+            prop = h.innerHTML.toLowerCase();
+            asc = false;
+        }
+        else if (h.classList.contains('th_sort_desc')) {
+            prop = h.innerHTML.toLowerCase();
+            asc = true;
+        }
+        else {
+            return;
+        }
+    });
+    countries.sort((a, b) => {
+        if (a[prop] < b[prop]) {
+            return -1;
+        }
+        if (a[prop] > b[prop]) {
+            return 1;
+        }
+        return 0;
+    });
+    if (asc) {
+        countries.reverse();
+    }
 }
 function searchBy(event, countries) {
     if (!event || !event.target)

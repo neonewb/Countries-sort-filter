@@ -6,7 +6,7 @@ const search = document.querySelector('input')
 
   renderCountries(countries)
 
-  let countriesCopy = countries.map((c) => ({ ...c }))
+  let countriesCopy: Country[] | undefined = countries.map((c) => ({ ...c }))
 
   for (const head of headers) {
     head.addEventListener('click', (event) => {
@@ -17,6 +17,7 @@ const search = document.querySelector('input')
 
   search!.addEventListener('input', (event) => {
     countriesCopy = searchBy(event, countries)
+    sortWith(countriesCopy)
     renderCountries(countriesCopy)
   })
 })()
@@ -38,7 +39,9 @@ async function api(): Promise<Country[]> {
   }
 }
 
-function renderCountries(countries: Country[]) {
+function renderCountries(countries: Country[] | undefined) {
+  if (!countries) return
+
   const tableBody = document.querySelector('#tb')!
 
   tableBody.innerHTML = ''
@@ -70,8 +73,8 @@ function createCell(name: string) {
   return cell
 }
 
-function sortBy(event: Event, countries: Country[]) {
-  if (!event || !event.target) return
+function sortBy(event: Event, countries: Country[] | undefined) {
+  if (!event || !event.target || !countries) return
 
   const prop: Props = event.target.innerText.toLowerCase()
 
@@ -95,6 +98,39 @@ function sortBy(event: Event, countries: Country[]) {
 
   event.target.classList.toggle('th_sort_asc', !asc)
   event.target.classList.toggle('th_sort_desc', asc)
+}
+
+function sortWith(countries: Country[] | undefined) {
+  if (!countries) return
+
+  let prop: Props
+  let asc: boolean = false
+
+  headers.forEach((h) => {
+    if (h.classList.contains('th_sort_asc')) {
+      prop = h.innerHTML.toLowerCase() as Props
+      asc = false
+    } else if (h.classList.contains('th_sort_desc')) {
+      prop = h.innerHTML.toLowerCase() as Props
+      asc = true
+    } else {
+      return
+    }
+  })
+
+  countries.sort((a, b) => {
+    if (a[prop] < b[prop]) {
+      return -1
+    }
+    if (a[prop] > b[prop]) {
+      return 1
+    }
+    return 0
+  })
+
+  if (asc) {
+    countries.reverse()
+  }
 }
 
 function searchBy(event: Event, countries: Country[]) {
