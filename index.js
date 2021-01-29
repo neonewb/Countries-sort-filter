@@ -1,16 +1,21 @@
 "use strict";
-main();
 const headers = document.querySelectorAll('th');
-async function main() {
+const search = document.querySelector('input');
+!(async () => {
     const countries = await api();
     renderCountries(countries);
+    let countriesCopy = countries.map((c) => ({ ...c }));
     for (const head of headers) {
         head.addEventListener('click', (event) => {
-            sortBy(event, countries);
-            renderCountries(countries);
+            sortBy(event, countriesCopy);
+            renderCountries(countriesCopy);
         });
     }
-}
+    search.addEventListener('input', (event) => {
+        countriesCopy = searchBy(event, countries);
+        renderCountries(countriesCopy);
+    });
+})();
 async function api() {
     try {
         const response = await fetch('https://restcountries.eu/rest/v2/all');
@@ -73,4 +78,16 @@ function sortBy(event, countries) {
     headers.forEach((h) => h.classList.remove('th_sort_asc', 'th_sort_desc'));
     event.target.classList.toggle('th_sort_asc', !asc);
     event.target.classList.toggle('th_sort_desc', asc);
+}
+function searchBy(event, countries) {
+    if (!event || !event.target)
+        return;
+    const key = event.target.value.toLowerCase();
+    return countries.filter((c) => {
+        let i;
+        for (i in c) {
+            if (String(c[i]).toLowerCase().includes(key))
+                return true;
+        }
+    });
 }

@@ -1,18 +1,25 @@
-main()
 const headers = document.querySelectorAll('th')
+const search = document.querySelector('input')
 
-async function main() {
+!(async () => {
   const countries = await api()
 
   renderCountries(countries)
 
+  let countriesCopy = countries.map((c) => ({ ...c }))
+
   for (const head of headers) {
     head.addEventListener('click', (event) => {
-      sortBy(event, countries)
-      renderCountries(countries)
+      sortBy(event, countriesCopy)
+      renderCountries(countriesCopy)
     })
   }
-}
+
+  search!.addEventListener('input', (event) => {
+    countriesCopy = searchBy(event, countries)
+    renderCountries(countriesCopy)
+  })
+})()
 
 async function api(): Promise<Country[]> {
   try {
@@ -63,7 +70,7 @@ function createCell(name: string) {
   return cell
 }
 
-function sortBy(event: Event | undefined, countries: Country[]) {
+function sortBy(event: Event, countries: Country[]) {
   if (!event || !event.target) return
 
   const prop: Props = event.target.innerText.toLowerCase()
@@ -90,6 +97,19 @@ function sortBy(event: Event | undefined, countries: Country[]) {
   event.target.classList.toggle('th_sort_desc', asc)
 }
 
+function searchBy(event: Event, countries: Country[]) {
+  if (!event || !event.target) return
+
+  const key: string = event.target.value.toLowerCase()
+
+  return countries.filter((c) => {
+    let i: Props
+    for (i in c) {
+      if (String(c[i]).toLowerCase().includes(key)) return true
+    }
+  })
+}
+
 interface Country {
   name: string
   region: string
@@ -98,4 +118,4 @@ interface Country {
   currency: string
 }
 
-type Props = 'name' | 'region' | 'capital' | 'population' | 'currency'
+type Props = keyof Country
