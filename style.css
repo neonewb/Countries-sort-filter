@@ -1,6 +1,13 @@
+.wrapper {
+  display: flex;
+}
+
 input {
-  margin: 10px 0px;
+  margin: 0px 5px;
   font-size: 18px;
+  height: 41px;
+  position: sticky;
+  top: 0;
 }
 
 table {
@@ -10,7 +17,7 @@ table {
 }
 
 th {
-  width: 100px;
+  width: 150px;
   font-size: 18px;
   cursor: pointer;
   padding: 10px 5px;
@@ -37,4 +44,8 @@ th {
 .th_sort_asc,
 .th_sort_desc {
   background: darkgreen;
+}
+
+td {
+  max-width: 150px;
 }
