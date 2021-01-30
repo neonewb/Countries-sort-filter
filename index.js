@@ -7,18 +7,19 @@ const search = document.querySelector('input');
     let countriesCopy = countries.map((c) => ({ ...c }));
     for (const head of headers) {
         head.addEventListener('click', (event) => {
-            sortBy(event, countriesCopy);
+            sortByEvent(event, countriesCopy);
             renderCountries(countriesCopy);
         });
     }
     search.addEventListener('input', (event) => {
-        countriesCopy = searchBy(event, countries);
-        sortWith(countriesCopy);
+        countriesCopy = searchByKey(event, countries);
+        sortWithoutEvent(countriesCopy);
         renderCountries(countriesCopy);
     });
 })();
 async function api() {
     try {
+        showLoading();
         const response = await fetch('https://restcountries.eu/rest/v2/all');
         const data = await response.json();
         return data.map((e) => ({
@@ -61,7 +62,7 @@ function createCell(name) {
     cell.appendChild(text);
     return cell;
 }
-function sortBy(event, countries) {
+function sortByEvent(event, countries) {
     if (!event || !event.target || !countries)
         return;
     const prop = event.target.innerText.toLowerCase();
@@ -82,7 +83,7 @@ function sortBy(event, countries) {
     event.target.classList.toggle('th_sort_asc', !asc);
     event.target.classList.toggle('th_sort_desc', asc);
 }
-function sortWith(countries) {
+function sortWithoutEvent(countries) {
     if (!countries)
         return;
     let prop;
@@ -113,7 +114,7 @@ function sortWith(countries) {
         countries.reverse();
     }
 }
-function searchBy(event, countries) {
+function searchByKey(event, countries) {
     if (!event || !event.target)
         return;
     const key = event.target.value.toLowerCase();
@@ -124,4 +125,11 @@ function searchBy(event, countries) {
                 return true;
         }
     });
+}
+function showLoading() {
+    const loading = document.createElement('p');
+    const loadingContent = document.createTextNode('Loading...');
+    loading.appendChild(loadingContent);
+    const tableBody = document.querySelector('#tb');
+    tableBody.appendChild(loading);
 }

@@ -10,20 +10,21 @@ const search = document.querySelector('input')
 
   for (const head of headers) {
     head.addEventListener('click', (event) => {
-      sortBy(event, countriesCopy)
+      sortByEvent(event, countriesCopy)
       renderCountries(countriesCopy)
     })
   }
 
   search!.addEventListener('input', (event) => {
-    countriesCopy = searchBy(event, countries)
-    sortWith(countriesCopy)
+    countriesCopy = searchByKey(event, countries)
+    sortWithoutEvent(countriesCopy)
     renderCountries(countriesCopy)
   })
 })()
 
 async function api(): Promise<Country[]> {
   try {
+    showLoading()
     const response = await fetch('https://restcountries.eu/rest/v2/all')
     const data = await response.json()
     return data.map((e: any) => ({
@@ -73,7 +74,7 @@ function createCell(name: string) {
   return cell
 }
 
-function sortBy(event: Event, countries: Country[] | undefined) {
+function sortByEvent(event: Event, countries: Country[] | undefined) {
   if (!event || !event.target || !countries) return
 
   const prop: Props = event.target.innerText.toLowerCase()
@@ -100,7 +101,7 @@ function sortBy(event: Event, countries: Country[] | undefined) {
   event.target.classList.toggle('th_sort_desc', asc)
 }
 
-function sortWith(countries: Country[] | undefined) {
+function sortWithoutEvent(countries: Country[] | undefined) {
   if (!countries) return
 
   let prop: Props
@@ -133,7 +134,7 @@ function sortWith(countries: Country[] | undefined) {
   }
 }
 
-function searchBy(event: Event, countries: Country[]) {
+function searchByKey(event: Event, countries: Country[]) {
   if (!event || !event.target) return
 
   const key: string = event.target.value.toLowerCase()
@@ -144,6 +145,14 @@ function searchBy(event: Event, countries: Country[]) {
       if (String(c[i]).toLowerCase().includes(key)) return true
     }
   })
+}
+
+function showLoading() {
+  const loading = document.createElement('p')
+  const loadingContent = document.createTextNode('Loading...')
+  loading.appendChild(loadingContent)
+  const tableBody = document.querySelector('#tb')!
+  tableBody.appendChild(loading)
 }
 
 interface Country {
