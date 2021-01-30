@@ -1,1 +1,1 @@
-Sort and search countries
+Sort and search countries with pure TypeScript (superset of JavaScript) from API: https://restcountries.eu/rest/v2/all
